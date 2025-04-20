@@ -46,14 +46,46 @@ namespace Authentication.Api.Controllers
                 return Unauthorized("Invalid username or password");
 
             var result = _hasher.VerifyHashedPassword(user, user.PasswordHash!, request.Password);
+            if (result != PasswordVerificationResult.Success) return Unauthorized();
 
-            if (result != PasswordVerificationResult.Success)
+            var accessToken = JwtTokenGenerator.GenerateToken(user, config);
+            var refreshToken = JwtTokenGenerator.GenerateRefreshToken();
 
-                return Unauthorized("Invalid username or password");
+            user.RefreshToken = refreshToken;
+            user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(7);
+            _db.SaveChanges();
 
-            var token = JwtTokenGenerator.GenerateToken(user, config);
+            return Ok(new AuthResponse
+            {
+                AccessToken = accessToken,
+                RefreshToken = refreshToken
+            });
 
-            return Ok(new { token });
         }
+
+
+        [HttpPost("refresh")]
+        public IActionResult Refresh(RefreshTokenRequest request, [FromServices] IConfiguration config)
+        {
+            var user = _db.Users.FirstOrDefault(u => u.UserName == request.UserName);
+            if (user == null || user.RefreshToken != request.RefreshToken || user.RefreshTokenExpiry < DateTime.UtcNow)
+            {
+                return Unauthorized("Invalid refresh token");
+            }
+
+            var newAccessToken = JwtTokenGenerator.GenerateToken(user, config);
+            var newRefreshToken = JwtTokenGenerator.GenerateRefreshToken();
+
+            user.RefreshToken = newRefreshToken;
+            user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(7);
+            _db.SaveChanges();
+
+            return Ok(new AuthResponse
+            {
+                AccessToken = newAccessToken,
+                RefreshToken = newRefreshToken
+            });
+        }
+
     }
 }

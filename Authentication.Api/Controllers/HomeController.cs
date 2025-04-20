@@ -19,7 +19,6 @@ namespace Authentication.Api.Controllers
         [Authorize(Roles = "Admin")]
         [HttpGet("admin")]
         public IActionResult AdminOnly() =>
-            Ok("You are an Admin and can access this route.");
+            Ok($"Hey {User.Identity?.Name}, You are an Admin and can access this route.");
     }
-
 }
