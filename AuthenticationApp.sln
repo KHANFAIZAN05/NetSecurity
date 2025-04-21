@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CUSTOM-COOKIE-BASED", "CUST
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomAuth.Api", "CustomAuth.Api\CustomAuth.Api.csproj", "{FB4B52AD-4FCC-4804-BF65-C7C8C5ADF015}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CUSTOM-KEY-BASED", "CUSTOM-KEY-BASED", "{53EF648D-0FFB-41D7-B972-1B8CCA192CB0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
